@@ -24,7 +24,7 @@ def df_of_data(files):
     data_files = {}
 
     for i in files:
-        #print("i: ", i, "leido ok")
+        print("i: ", i, "leido ok")
         data = pd.read_csv("files/" + i + ".csv", skiprows=2, header=0)
         # Acomodo de datos tickers para futuras descargas en YFinance
         data['Ticker'] = [i.replace("*","") for i in data["Ticker"]]
@@ -48,12 +48,13 @@ def df_of_data(files):
     # Convertir Fecha a datetime
     naftrac['Fecha'] = pd.to_datetime(naftrac['Fecha'],format='%Y%m%d')
 
+    #return naftrac
     return naftrac
 
 
 def conversion_cash(df): 
     # Cambiamos tickers a cash (KOFL.MX, KOFUBL.MX, USD.MXN, BSMXB.MX, NMKA.MX )
-    deltickers = ['KOFL.MX', 'KOFUBL.MX', 'USD.MX', 'BSMXB.MX', 'NMKA.MX', '\xa0.MX','NEMAKA.MX']
+    deltickers = ['KOFL.MX', 'KOFUBL.MX', 'USD.MX', 'BSMXB.MX', 'NMKA.MX','NEMAKA.MX']
     df = df[~df['Ticker'].isin(deltickers)]
 
     return df

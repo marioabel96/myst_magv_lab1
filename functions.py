@@ -13,8 +13,3 @@ import pandas as pd
 def get_dates(list_of_files):
     dates = [i.strftime('%Y-%m-%d') for i in sorted([pd.to_datetime(i[8:]).date() for i in list_of_files])]
     return dates
-# %%
-def conversion_cash(df): 
-    # Cambiamos tickers a cash (KOFL.MX, KOFUBL.MX, USD.MXN, BSMXB.MX, NMKA.MX )
-    tickers = ['KOFL.MX', 'KOFUBL.MX', 'USD.MX', 'BSMXB.MX', 'NMKA.MX'
-    ]
