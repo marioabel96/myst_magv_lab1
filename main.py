@@ -12,9 +12,12 @@ import pandas as pd
 import numpy as np
 from os import listdir, path
 from os.path import isfile, join
+import datetime
 
 
-#%% # Lectura de archivos en carpeta "files"
+
+#%%
+# Lectura de archivos en carpeta "files"
 
 # Obtener ruta de los archivos
 abspath = path.abspath("files/")
@@ -34,23 +37,65 @@ dates = get_dates(files)
 naftrac_complete = conversion_cash(naftrac_complete) 
 
 # Creamos un nuevo df con solo las columnas que necesitaremos
-naftrac_stats = naftrac_complete[['Ticker', 'Peso (%)', 'Fecha']]
+naftrac_stats = naftrac_complete[['Ticker', 'Peso (%)']]
 
 # Creamos lista de todos los tickers
 all_tickers = list(naftrac_stats['Ticker'].unique())
 
 
 
+
 #%%
 # Descargamos los precios de los ticker en el dia de rebalanceo
+closes = price_adj_close(all_tickers, dates[0],dates[-1], freq="d")
+
+# Tomamos solo los precios que nos interesan (de fechas de los archivos "files")
+monthly_closes = closes[closes.index.isin(dates)]
+
+
+
+#%%
+# Agregamos precios de yfinance (monthly_closes) a los activos en naftrac_stats
+naftrac_stats = df_act_prices(naftrac_stats, monthly_closes, dates)
+
+
+
+#%% 
+#-------------------------------------------
+#-- Inversión Pasiva NAFTRAC
+comision = 0.00125 # (títulos*precio*comisión).
+capital = 1000000
+
+## Pre-pandemia 31-01-2018 a 31-01-2020 df_pasiva_a
+## Tomar solo los valores pre-pandemia
+portafolio_pasivo_prepandemia = inv_pasiva_posicion(naftrac_stats, dates[0], capital, comision)
+# lapso de inv 31-01-2018 a 31-01-2020
+lapso_prepandemia = dates[0:25]
+
+
+#%% 
+
+# df_pasiva_a
+df_pasiva_a = pasive_invstmnt_rend(portafolio_pasivo_prepandemia, lapso_prepandemia, capital, naftrac_stats)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 #%%
 #-------------------------------------------
 #-- Inversión Pasiva NAFTRAC
-comision = 0.00125 # (títulos*precio*comisión).
-capital = 1000000
+
+
 ## Calcular el val del portafolio para todas las fechas con los archivos historicos
 ## Pre-pandemia 31-01-2018 a 31-01-2020 df_pasiva_a
 ## En-Pandemia  28-02-2020 a 28-02-2021 df_pasiva_b
