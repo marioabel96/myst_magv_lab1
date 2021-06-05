@@ -72,14 +72,19 @@ portafolio_pasivo_prepandemia = inv_pasiva_posicion(naftrac_stats, dates[0], cap
 # lapso de inv 31-01-2018 a 31-01-2020
 lapso_prepandemia = dates[0:25]
 
-
-#%% 
-
-# df_pasiva_a
+# Calculamos los rendimientos del portafolio
 df_pasiva_a = pasive_invstmnt_rend(portafolio_pasivo_prepandemia, lapso_prepandemia, capital, naftrac_stats)
 
 
 
+## En-pandemia 28-02-2020 a 28-02-2021
+## Tomar solo los valores pre-pandemia
+portafolio_pasivo_enpandemia = inv_pasiva_posicion(naftrac_stats, dates[25], capital, comision)
+# lapso de inv 31-01-2018 a 31-01-2020
+lapso_enpandemia = dates[25:]
+
+# Calculamos los rendimientos del portafolio
+df_pasiva_b = pasive_invstmnt_rend(portafolio_pasivo_enpandemia, lapso_enpandemia, capital, naftrac_stats)
 
 
 
@@ -91,7 +96,10 @@ df_pasiva_a = pasive_invstmnt_rend(portafolio_pasivo_prepandemia, lapso_prepande
 
 
 
-#%%
+
+
+
+
 #-------------------------------------------
 #-- Inversión Pasiva NAFTRAC
 

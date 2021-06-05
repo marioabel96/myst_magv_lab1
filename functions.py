@@ -105,13 +105,14 @@ def pasive_invstmnt_rend(portafolio_pasivo, lapso, capital, naftrac_stats):
     # prueba con inicio en $1M (capital)
     prueba = ini.append(prueba)
 
-    # Calculo de rendimientos logaritmicos
-    prueba['rend'] =np.log(prueba/prueba.shift(1))
-    prueba = prueba.fillna(0)
-
+    # Calculo de rendimientos normales
+    prueba['rend'] = prueba['capital']/prueba['capital'].shift(1)-1
+    prueba['rend'] = prueba['rend'].fillna(0)
     # Calculo de rendimiento acumulado
-    prueba['rend_acum'] = prueba['rend'].cumsum()
-    prueba = prueba.fillna(0)
+    prueba['rend_acum'] = prueba['rend']
+    for i in range(len(prueba)):
+        prueba['rend_acum'][i] = (prueba['capital'][i]/prueba['capital'][0])-1
+
 
     #renombramos el indice como ejemplo lab
     prueba.index.names = ['timestamp']
