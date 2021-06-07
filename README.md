@@ -1,6 +1,9 @@
 ## Description
-*Insert here a brief description of the project, including, purpose, technologies used and context 
-where it was created.*
+*Laboratorio 1 -Inversión de Capital.
+Buscamos Responder a la pregunta ¿Qué estrategia de inversión propondrías si tu trabajo fuera invertir 1 Millón de pesos?
+
+Utilizando como base el indice "NAFTRAC" realizamos una estrategia de inversión pasiva, y otra activa, para al final compararlas entre ellas.
+*
 
 ## Install dependencies
 
@@ -10,9 +13,6 @@ Install all the dependencies stated in the requirements.txt file, just run the f
         
 Or you can manually install one by one using the name and version in the file.
 
-## Funcionalities
-
-*Add here examples of core functionalities for the project in this repository.*
 
 ## Author
 Mario Abel García Verduzco
