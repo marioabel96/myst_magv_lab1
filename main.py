@@ -89,31 +89,56 @@ df_pasiva_b = pasive_invstmnt_rend(portafolio_pasivo_enpandemia, lapso_enpandemi
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+#%% 
 #-------------------------------------------
-#-- Inversión Pasiva NAFTRAC
+#-- Inversión Activa NAFTRAC
+
+# obtencion del portafolio activo
+comision = 0.00125 # (títulos*precio*comisión).
+capital = 1000000
+portafolio_activo = inv_pasiva_posicion(naftrac_stats, dates[0], capital, comision)
+
+#limpiamos activos que se añaden despues
+naftrac_stats_active = limpia_activos(naftrac_stats, portafolio_activo)
 
 
-## Calcular el val del portafolio para todas las fechas con los archivos historicos
-## Pre-pandemia 31-01-2018 a 31-01-2020 df_pasiva_a
-## En-Pandemia  28-02-2020 a 28-02-2021 df_pasiva_b
+# Obtenemos las posiciones a tomar basados en 
+"""
+Disminuir en un 2.5% la posición en títulos de aquellos activos cuyo precio disminuyó un 5% o más
+Aumentar en un 2.5% la posición en títulos de aquellos activos cuyo precio aumentó un 5% o más
+"""
+trading_activo = trading_bot(naftrac_stats_active)
+
+
+#filtramos solo decisiones
+
+trading_activo = dec_filter(trading_activo)
+
+
+
+#%%
+
+prueba = portafolio_activo
+cash_ini = capital - prueba['$ Total'].sum() - prueba['Comisión'].sum()
+
+
+#%%
+llenado = trading_activo
+llenado['Movimientos'] = 0
+
+#%%
+#Iniciamos calc de corrida 
 
 
 
 
-#-------------------------------------------
-#-- Inversión Activa
-# Tabla de historico operaciones
-# Tabla medidas de atribución al desempeño
+
+#%%
+
+#---------------- MEdidas de atribución del desempeño
+df_activa=0
+mad = mad(df_pasiva_a,df_pasiva_b,df_activa)
+
+
 
 # %%

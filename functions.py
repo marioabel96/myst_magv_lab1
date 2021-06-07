@@ -118,3 +118,76 @@ def pasive_invstmnt_rend(portafolio_pasivo, lapso, capital, naftrac_stats):
     prueba.index.names = ['timestamp']
 
     return prueba
+
+
+def limpia_activos(naftrac_stats, portafolio_activo):
+    # Utiliza como base sólo los activos incluidos en la ponderación inicial del NAFTRAC en el 31-01-2018 y no utilices cualquier otro activo que se agregue al ETF en fechas posteriores.
+    # hacemos una copia de naftrac stats
+    naftrac_stats_active = naftrac_stats
+    # hacemos una lista de los activos en el portafilio inicial
+    lista_tickers_activo = portafolio_activo['Ticker'].unique()
+    lista_tickers_activo = list(lista_tickers_activo) 
+    # filtramos naftrac stats active con solo los valores que estan en el portafio inicial
+    naftrac_stats_active = naftrac_stats_active[naftrac_stats_active['Ticker'].isin(lista_tickers_activo)]
+
+    return naftrac_stats_active
+
+
+
+def trading_bot(naftrac_stats_active):
+    #-------- logica de trading ----
+
+    # acomodamos el dataframe de manerapor ticker y date
+    df_active = naftrac_stats_active
+    df_active = df_active.sort_values(by=['Ticker','Date'], ascending=True)
+
+    #calcualamos el cambio porcentual entre el precio anterior
+    df_active['Change'] = df_active['Close'].pct_change()
+
+    # Columna para verificar si el anterior era el mismo activo
+    df_active.loc[df_active['Date'] == df_active['Date'][0], ['Change']] = 'nan'
+    # quitamos los nan que es cuando cambia de activo ( la primera fecha de cada activo)
+    df_active = df_active[df_active['Change'] !=  'nan']
+
+    # verificar si el precio subio 5% if pct.change>.05 =true
+    a= 0.05
+    df_active['buy'] = 0
+    df_active['buy'] = np.where(df_active['Change']>= a, 1,0)
+
+    # verificar si el precio bajo 5% if pct.change<-.05 =true
+    b= -0.05
+    df_active['sell'] = 0
+    df_active['sell'] = np.where(df_active['Change']<= b, 1,0)
+
+    # borramos columnas que no necesitamos
+    del df_active['Peso (%)']
+    return df_active
+
+def dec_filter(trading_activo):
+    #filtramos solo las decisiones y ordenamos por mes
+    # Columna para verificar si el anterior era el mismo activo
+    filter = trading_activo
+    filter['filter'] = 0
+    filter.loc[filter['buy'] == 1, ['filter']] = 1
+    filter.loc[filter['sell'] == 1, ['filter']] = 1
+    filter = filter[filter['filter'] != 0]
+    del filter['filter']
+    # ordenamos por mes para facilitar calculos más adelante
+    filter = filter.sort_values(by=['Date'], ascending=True)
+    
+    return filter
+
+
+    #---------Medidas de atribucion del desempeño
+def mad(df_pasiva_a,df_pasiva_b,df_activa):
+    mad = pd.DataFrame({
+            'descripción': ['Rendimiento Promedio Mensual','Rendimiento mensual acumulado','Sharpe Ratio 	'],
+            'inv_activa': ['0','0','0'],
+            'inv_pasiva_a': [df_pasiva_a['rend'].mean()*12,df_pasiva_a['rend_acum'].mean()*12,(df_pasiva_a['rend'].mean()*12-0.0429)/df_pasiva_a['rend'].std()],
+            'inv_pasiva_b': [df_pasiva_b['rend'].mean()*12,df_pasiva_b['rend_acum'].mean()*12,(df_pasiva_b['rend'].mean()*12-0.0429)/df_pasiva_b['rend'].std()],
+            
+        
+        },index=['rend_m', 'rend_c', 'sharpe'])
+    df_activa =0
+
+    return mad

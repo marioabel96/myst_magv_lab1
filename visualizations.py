@@ -5,3 +5,6 @@
 # -- license: GPL-3.0 License                                                                            -- #
 # -- repository: https://github.com/marioabel96/myst_magv_lab1                                           -- #
 # -- --------------------------------------------------------------------------------------------------- -- #
+import chart_studio.plotly as py
+import plotly.figure_factory as ff
+import pandas as pd
